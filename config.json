@@ -1,0 +1,178 @@
+{
+"Site Reports": {
+"gridClass": "grid-cols-3 grid-rows-2",
+"visuals": [
+{ "title": "Visual 1", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 2", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 3", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 4", "url": "", "colSpan": 2, "rowSpan": 1, "size": "double width" },
+{ "title": "Visual 5", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" }
+]
+},
+"Actions": {
+"gridClass": "grid-cols-3 grid-rows-2",
+"visuals": [
+{
+"title": "Overdue Actions Breakdown",
+"type": "composite",
+"url": "https://app.powerbi.com/reportEmbed?reportId=07520691-2dfd-4ecd-bcbb-2e7d735aba9b",
+"colSpan": 1,
+"rowSpan": 1,
+"children": [
+{
+"title": "Overdue Actions",
+"url": "https://app.powerbi.com/reportEmbed?reportId=07520691-2dfd-4ecd-bcbb-2e7d735aba9b&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a",
+"size": "small"
+},
+{
+"title": "Resolved",
+"type": "kpi",
+"value": "0",
+"label": "Overdue Count"
+},
+{
+"title": "Resolved on Time Trend",
+"url": "https://app.powerbi.com/reportEmbed?reportId=e5118eff-0f67-41ca-9981-98203784a09b&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a",
+"size": "medium"
+}
+],
+"size": "large"
+},
+{
+"title": "Overdue Actions by Type",
+"url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=f5938693a141300f5edf",
+"rowSpan": 1,
+"size": "large",
+"legend": [
+{ "label": "Safety", "class": "legend-safety" },
+{ "label": "Environemntal", "class": "legend-env" },
+{ "label": "Quality", "class": "legend-qual" }
+]
+},
+{
+"title": "Overdue Actions by Site",
+"url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=74900050a25fc94ccceb",
+"colSpan": 1,
+"rowSpan": 1,
+"size": "large",
+"legend": [
+{ "label": "Safety", "class": "legend-safety" },
+{ "label": "Environemntal", "class": "legend-env" },
+{ "label": "Quality", "class": "legend-qual" }
+]
+},
+{
+"title": "C",
+"url": "https://app.powerbi.com/reportEmbed?reportId=25286176-1286-4f5a-9507-40f470a8aa32&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=2c42543562c867e418c6",
+"colSpan": 2,
+"rowSpan": 1,
+"size": "double width"
+},
+{
+"title": "Analysis D",
+"url": "",
+"colSpan": 1,
+"rowSpan": 1,
+"size": "medium"
+}
+]
+},
+"Compliance": {
+"gridClass": "grid-cols-3 grid-rows-2",
+"visuals": [
+{ "title": "Visual 1", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 2", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 3", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 4", "url": "", "colSpan": 2, "rowSpan": 1, "size": "double width" },
+{ "title": "Visual 5", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" }
+]
+},
+"Incidents": {
+"gridClass": "grid-cols-3 grid-rows-2",
+"visuals": [
+{ "title": "Visual 1", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 2", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 3", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 4", "url": "", "colSpan": 2, "rowSpan": 1, "size": "double width" },
+{ "title": "Visual 5", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" }
+]
+},
+"Safety Observation Reports": {
+"gridClass": "grid-cols-3 grid-rows-2",
+"visuals": [
+{ "title": "Visual 1", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 2", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 3", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 4", "url": "", "colSpan": 2, "rowSpan": 1, "size": "double width" },
+{ "title": "Visual 5", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" }
+]
+},
+"Senior Management": {
+"gridClass": "grid-cols-3 grid-rows-2",
+"visuals": [
+{ "title": "Visual 1", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 2", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 3", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 4", "url": "", "colSpan": 2, "rowSpan": 1, "size": "double width" },
+{ "title": "Visual 5", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" }
+]
+},
+"QSET Audits": {
+"gridClass": "grid-cols-3 grid-rows-2",
+"visuals": [
+{ "title": "Visual 1", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 2", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 3", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 4", "url": "", "colSpan": 2, "rowSpan": 1, "size": "double width" },
+{ "title": "Visual 5", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" }
+]
+},
+"Overview": {
+"gridClass": "grid-cols-3 grid-rows-2",
+"visuals": [
+{ "title": "Visual 1", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 2", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 3", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
+{ "title": "Visual 4", "url": "", "colSpan": 2, "rowSpan": 1, "size": "double width" },
+{ "title": "Visual 5", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" }
+]
+},
+"Site Map": {
+"type": "library",
+"library": [
+{
+"id": "MAP-GLD-01",
+"title": "Site Heat Map - Issues",
+"category": "Safety",
+"desc": "A break down of Issues by site, with drill down to specific action types and severity.",
+"url": "assets/kepler.gl.html"
+}
+]
+},
+"Reports": {
+"type": "library",
+"library": [
+{
+"id": "01_STC_INC_Rep",
+"title": "Weekly Incident Report",
+"category": "Incident",
+"desc": "Round up of all safety incidents, near misses, and environmental events from the past week.",
+"url": "https://rjmcleod-my.sharepoint.com/personal/tcox_rjmcleod_co_uk/_layouts/15/Doc.aspx?sourcedoc={ee2bea94-d8e4-4f34-82d7-2023948a5315}&action=embedview&Item=Gld_01_STC_Inspections&wdHideGridlines=True&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True&edaebf=rslc0&wdAllowInteractivity=True"
+},
+{
+"id": "00_AST_McL39",
+"title": "McL39",
+"category": "Compliance",
+"desc": "Detailed analysis of leading indicators and regional safety performance.",
+"url": "https://app.powerbi.com/reportEmbed?reportId=07520691-2dfd-4ecd-bcbb-2e7d735aba9b&autoAuth=true"
+},
+{
+"id": "RPT-QAL-12",
+"title": "QSET Quality Audit HUD",
+"category": "Quality",
+"desc": "Site-by-site quality scoring and trend analysis for senior management.",
+"url": "https://app.powerbi.com/reportEmbed?reportId=25286176-1286-4f5a-9507-40f470a8aa32&autoAuth=true"
+}
+]
+}
+}
