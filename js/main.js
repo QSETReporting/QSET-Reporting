@@ -1,7 +1,7 @@
 let PAGE_CONFIG = {};
 // Check if user previously completed the handshake in this browser session
 let isAuthorized = sessionStorage.getItem('rj_mcleod_auth') === 'true';
-let currentPage = 'Incidents';
+let currentPage = 'Overview';
 
 /**
  * STREAMING_CHUNK: Fetching Intelligence Vault...
@@ -70,25 +70,96 @@ function finalizeHandshake() {
     switchPage(currentPage);
 }
 
+// NEW: Dynamically checks the config for the current page and injects/removes the banner
+function updateBanner(config) {
+    const gridContainer = document.getElementById('grid-container');
+    let banner = document.getElementById('dynamic-alert-banner');
+
+    if (!config || !config.banner) {
+        if (banner) banner.remove();
+        return;
+    }
+
+    const bannerData = config.banner;
+    const text = bannerData.text || 'Alert';
+    const btnText = bannerData.buttonText || 'View';
+    const targetAction = bannerData.action || ''; 
+    const bgColor = bannerData.color || '#ef20d0'; 
+
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'dynamic-alert-banner';
+        gridContainer.parentNode.insertBefore(banner, gridContainer);
+    }
+
+    banner.className = 'w-full px-6 py-1.5 flex items-center justify-between shrink-0 z-40 border-b shadow-[0_2px_10px_rgba(0,0,0,0.3)] animate-in slide-in-from-top-4 duration-300';
+    banner.style.backgroundColor = bgColor;
+    banner.style.borderColor = '#ffffff30';
+    banner.style.color = 'white';
+    
+    // NEW LOGIC: If the action starts with 'http', open in a new tab. Otherwise, switch internal page.
+    const clickBehavior = targetAction.startsWith('http') 
+        ? `window.open('${targetAction}', '_blank')` 
+        : `switchPage('${targetAction}')`;
+
+    banner.innerHTML = `
+        <div class="flex items-center gap-2.5">
+            <svg class="w-3.5 h-3.5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            <span class="font-black uppercase tracking-[0.15em] text-[10px] text-shadow-sm leading-none">${text}</span>
+        </div>
+        <button onclick="${clickBehavior}" 
+                class="bg-white px-4 py-1 rounded-sm font-black uppercase text-[9px] tracking-widest hover:bg-black transition-colors shadow-sm cursor-pointer leading-none"
+                style="color: ${bgColor};"
+                onmouseover="this.style.color='white'"
+                onmouseout="this.style.color='${bgColor}'">
+            ${btnText}
+        </button>
+    `;
+}
+
+function getPageConfig(pageName) {
+    if (PAGE_CONFIG[pageName] && PAGE_CONFIG[pageName].type !== 'parent') {
+        return PAGE_CONFIG[pageName];
+    }
+    
+    // Search within parents
+    for (const key in PAGE_CONFIG) {
+        if (PAGE_CONFIG[key].type === 'parent' && PAGE_CONFIG[key].children[pageName]) {
+            return PAGE_CONFIG[key].children[pageName];
+        }
+    }
+    return null;
+}
+
 function switchPage(pageName) {
     if (!isAuthorized) return renderAuthHandshake();
     
     currentPage = pageName;
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-item, .nav-sub-item').forEach(el => el.classList.remove('active'));
     
-    const navId = `nav-${pageName.replace(/\s+/g, '')}`;
+    // Using a more robust regex replacement to handle symbols like & and /
+    const navId = `nav-${pageName.replace(/[^a-zA-Z0-9]/g, '')}`;
     if (document.getElementById(navId)) document.getElementById(navId).classList.add('active');
 
     const titleEl = document.getElementById('page-title');
     if (titleEl) titleEl.innerText = `${pageName.toUpperCase()}`;
 
-    // NEW: Branching logic based on page type
-    const config = PAGE_CONFIG[pageName];
+    // Branching logic based on page type using the nested lookup
+    const config = getPageConfig(pageName);
+    if (!config) {
+        console.warn(`Configuration not found for: ${pageName}`);
+        return;
+    }
+
+    // Trigger the dynamic banner system
+    updateBanner(config);
     
     if (config.type === 'library') {
         renderReportsLibrary(config.library);
     } else {
-        renderDynamicGrid(pageName);
+        renderDynamicGrid(pageName, config);
     }
 }
 
@@ -118,7 +189,7 @@ function launchFullReport(url, title) {
     const container = document.getElementById('grid-container');
     
     /**
-     * STREAMING_CHUNK: Processing URL for Deployment...
+     * Processing URL for Deployment...
      * We determine if this is a Power BI report, an Excel file, or a local asset.
      */
     let finalUrl = url;
@@ -156,10 +227,10 @@ function launchFullReport(url, title) {
         </div>
     `;
 }
-/* ... rest of the code ... */
-function renderDynamicGrid(pageName) {
+
+function renderDynamicGrid(pageName, passedConfig = null) {
     const container = document.getElementById('grid-container');
-    const config = PAGE_CONFIG[pageName];
+    const config = passedConfig || getPageConfig(pageName);
     if (!container || !config) return;
 
     // Apply the grid layout specified in the JSON
@@ -181,14 +252,16 @@ function renderDynamicGrid(pageName) {
     });
 }
 
-/* STREAMING_CHUNK: Updating renderStandardCard for dynamic legends... */
 function renderStandardCard(container, vis) {
     const cleanParams = "&filterPaneEnabled=false&navContentPaneEnabled=false&chromeless=true";
     const finalUrl = vis.url.includes('filterPaneEnabled') ? vis.url : vis.url + cleanParams;
     
+    // Updated to catch 'excel-wide-fit'
     const cropClass = vis.size === 'small' ? 'pbi-small' : 
-                     (vis.size === 'medium' ? 'pbi-medium' : 
-                     (vis.size === 'double width' ? 'pbi-double-width' : 'pbi-large'));
+                      vis.size === 'medium' ? 'pbi-medium' : 
+                      vis.size === 'double width' ? 'pbi-double-width' : 
+                      vis.size === 'excel-wide-fit' ? 'excel-wide-fit' : 
+                      'pbi-large';
 
     // Generate Dynamic Legend HTML from JSON
     const legendHTML = vis.legend ? `
@@ -227,7 +300,6 @@ function renderCompositeCard(container, vis) {
             <div class="grid grid-cols-2 gap-4 h-28">
                 ${vis.children.slice(0, 2).map(child => generateChildHTML(child)).join('')}
             </div>
-            <!-- REMOVED: Extra viewport wrapper that was hiding the title -->
             ${vis.children[2] ? generateChildHTML(vis.children[2], false, true) : ''}
         </div>
     `;
@@ -249,14 +321,12 @@ function generateChildHTML(child, isFullHeight = false, isFlexGrow = false) {
     const cleanParams = "&filterPaneEnabled=false&navContentPaneEnabled=false&chromeless=true";
     const finalUrl = child.url === "" ? "" : (child.url.includes('filterPaneEnabled') ? child.url : child.url + cleanParams);
     
-    /* FIX: Changed 'vis.size' to 'child.size' to prevent ReferenceError */
     const cropClass = child.size === 'small' ? 'pbi-small' : 
                      (child.size === 'medium' ? 'pbi-medium' : 
                      (child.size === 'double width' ? 'pbi-double-width' : 'pbi-large')); 
 
     return `
         <div class="flex flex-col ${isFullHeight ? 'h-full' : ''} ${isFlexGrow ? 'flex-1' : ''}">
-            <!-- The title now renders because isFullHeight is false -->
             <div class="sub-label-header">${child.title.toUpperCase()}</div>
             <div class="pbi-viewport border border-zinc-800 rounded overflow-hidden flex-1">
                 ${finalUrl ? `<iframe class="${cropClass}" src="${finalUrl}" scrolling="no"></iframe>` : `<div class="visual-placeholder">Awaiting...</div>`}
@@ -276,14 +346,73 @@ function renderNavigation() {
     const navContainer = document.getElementById('main-nav');
     if (!navContainer) return;
     navContainer.innerHTML = '';
-    Object.keys(PAGE_CONFIG).forEach(page => {
-        const navItem = document.createElement('div');
-        navItem.id = `nav-${page.replace(/\s+/g, '')}`;
-        navItem.className = 'nav-item';
-        navItem.innerText = page;
-        navItem.onclick = () => isAuthorized && switchPage(page);
-        navContainer.appendChild(navItem);
+    
+    Object.keys(PAGE_CONFIG).forEach(key => {
+        const config = PAGE_CONFIG[key];
+        
+        if (config.type === 'parent') {
+            const parentId = `parent-${key.replace(/[^a-zA-Z0-9]/g, '')}`;
+            
+            // Render the clickable parent accordion header
+            const parentDiv = document.createElement('div');
+            parentDiv.className = 'nav-parent group flex items-center justify-between px-4 py-3 cursor-pointer text-[#ffcc00] hover:text-[#ffcc00] hover:bg-zinc-800 transition-colors border-l-4 border-transparent font-bold uppercase text-[0.8rem] tracking-[1px]';
+            parentDiv.onclick = () => toggleNavParent(parentId);
+            parentDiv.innerHTML = `
+                <span>${key}</span>
+                <svg class="chevron w-3 h-3 transition-transform duration-200 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            `;
+            
+            // Render the container for children
+            const childrenContainer = document.createElement('div');
+            childrenContainer.id = parentId;
+            childrenContainer.className = 'nav-children flex flex-col bg-[#0f0f0f] border-y border-zinc-900 shadow-inner';
+            
+            // Loop through and render children
+            Object.keys(config.children).forEach(childKey => {
+                const childItem = document.createElement('div');
+                childItem.id = `nav-${childKey.replace(/[^a-zA-Z0-9]/g, '')}`;
+                childItem.className = 'nav-sub-item pl-8 py-2.5 cursor-pointer text-[#666] hover:text-[#ffcc00] hover:bg-[#151515] transition-colors border-l-4 border-transparent font-bold uppercase text-[0.7rem] tracking-[1px]';
+                childItem.innerText = childKey;
+                childItem.onclick = (e) => {
+                    e.stopPropagation(); // Prevents parent from collapsing when child is clicked
+                    if(isAuthorized) switchPage(childKey);
+                };
+                childrenContainer.appendChild(childItem);
+            });
+            
+            navContainer.appendChild(parentDiv);
+            navContainer.appendChild(childrenContainer);
+            
+        } else {
+            // Render standalone item (like Overview or Actions)
+            const navItem = document.createElement('div');
+            navItem.id = `nav-${key.replace(/[^a-zA-Z0-9]/g, '')}`;
+            navItem.className = 'nav-item';
+            navItem.innerText = key;
+            navItem.onclick = () => isAuthorized && switchPage(key);
+            navContainer.appendChild(navItem);
+        }
     });
+}
+
+function toggleNavParent(parentId) {
+    const childrenContainer = document.getElementById(parentId);
+    const parentDiv = childrenContainer.previousElementSibling;
+    const chevron = parentDiv.querySelector('.chevron');
+    
+    if (childrenContainer.classList.contains('hidden')) {
+        childrenContainer.classList.remove('hidden');
+        childrenContainer.classList.add('flex');
+        chevron.classList.add('rotate-180');
+        parentDiv.classList.add('text-[#ffcc00]');
+    } else {
+        childrenContainer.classList.add('hidden');
+        childrenContainer.classList.remove('flex');
+        chevron.classList.remove('rotate-180');
+        parentDiv.classList.remove('text-[#ffcc00]');
+    }
 }
 
 function displayDeploymentError(message) {
