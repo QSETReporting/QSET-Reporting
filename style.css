@@ -1,0 +1,225 @@
+/*
+
+20_WEB_CommandCenter_Styles_Gld
+
+The "Gold Standard" UI Canvas
+*/
+
+:root {
+--rj-black: #0a0a0a;
+--rj-charcoal: #1a1a1a;
+--rj-grey: #2d2d2d;
+--rj-yellow: #ffcc00;
+--rj-yellow-muted: #d4aa00;
+--border-radius: 4px;
+}
+
+body {
+background-color: var(--rj-black);
+color: #ffffff;
+font-family: 'Segoe UI', 'Roboto', sans-serif;
+margin: 0;
+height: 100vh;
+width: 100vw;
+overflow: hidden;
+}
+
+/* Sidebar Navigation - The Strategic Flank */
+.sidebar {
+background-color: var(--rj-black);
+border-right: 1px solid var(--rj-grey);
+}
+
+.nav-item {
+border-left: 4px solid transparent;
+transition: all 0.2s ease-in-out;
+color: #a0a0a0;
+cursor: pointer;
+padding: 1rem;
+font-weight: 700;
+text-transform: uppercase;
+font-size: 0.8rem;
+letter-spacing: 1px;
+}
+
+.nav-item:hover {
+background-color: var(--rj-grey);
+color: var(--rj-yellow);
+}
+
+.nav-item.active {
+border-left: 4px solid var(--rj-yellow);
+background-color: var(--rj-charcoal);
+color: var(--rj-yellow);
+}
+
+/* Card Structures */
+.card-slot {
+background-color: var(--rj-charcoal);
+border: 1px solid var(--rj-grey);
+border-radius: var(--border-radius);
+position: relative;
+overflow: hidden;
+display: flex;
+flex-direction: column;
+}
+
+.card-header {
+background: #111;
+padding: 8px 14px;
+font-size: 0.7rem;
+text-transform: uppercase;
+letter-spacing: 1.5px;
+color: #777;
+font-weight: 900;
+border-bottom: 1px solid var(--rj-grey);
+flex-shrink: 0;
+}
+
+.construction-yellow {
+color: var(--rj-yellow);
+}
+
+/* --- THE CENTERING ARMORY --- */
+
+/* Wrapper for the iframe viewports */
+.pbi-viewport {
+width: 100%;
+height: 100%;
+overflow: hidden;
+position: relative;
+background: #000;
+}
+
+.pbi-double-width {
+width: 100%;
+height: 116%; /* Adjusted for wider view */
+margin-top: 10px; /* Centering tweak */
+left: -65%;
+transform: scale(1);
+transform-origin: top left;
+}
+/* LARGE: For full-width "Action Analysis" or Major Visuals */
+.pbi-large {
+width: 100%;
+height: 140%;
+position: absolute;
+top: -39px;
+left: 0;
+}
+
+/* MEDIUM: For "ROT Trend" (Uses 50% scale zoom to fit wide data into small slots) */
+.pbi-medium {
+width: 200%;
+height: 500%;
+position: absolute;
+top: -126%;
+left: -25%;
+transform: scale(0.75);
+transform-origin: top left;
+}
+
+/* SMALL: For "Overdue Count" (The "Boxy" portrait crop for 1.1 visuals) */
+.pbi-small {
+width: 200%;
+height: 280%;
+position: absolute;
+top: -118px;
+left: -97%;
+transform: scale(1.5);
+transform-origin: top left;
+}
+
+/* --- SUB-ELEMENTS LABELS --- */
+.sub-label-header {
+font-size: 9px;
+color: #666;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: 2px;
+margin-bottom: 4px;
+}
+
+.callout-box {
+background: rgba(255, 255, 255, 0.02);
+border: 1px solid var(--rj-grey);
+border-radius: var(--border-radius);
+}
+
+.visual-placeholder {
+height: 100%;
+width: 100%;
+display: flex;
+align-items: center;
+justify-content: center;
+border: 1px dashed #222;
+color: #444;
+font-weight: 900;
+text-transform: uppercase;
+letter-spacing: 3px;
+font-size: 10px;
+}
+
+/* Custom Legend Color Classes */
+.legend-accident { background-color: #FF3366; box-shadow: 0 0 5px rgba(255, 51, 102, 0.5); }
+.legend-safety-neg { background-color: #FF0000; box-shadow: 0 0 5px rgba(255, 0, 0, 0.5); }
+.legend-env-neg { background-color: #FF6B6B; box-shadow: 0 0 5px rgba(255, 107, 107, 0.5); }
+.legend-hipo { background-color: #ef20d0; box-shadow: 0 0 5px rgba(255, 102, 0, 0.5); }
+.legend-near-miss { background-color: #FFCC00; box-shadow: 0 0 5px rgba(255, 204, 0, 0.5); }
+.legend-safety-pos { background-color: #FFBB00; box-shadow: 0 0 5px rgba(255, 179, 71, 0.5); }
+.legend-env-pos { background-color: #00FF66; box-shadow: 0 0 5px rgba(0, 255, 102, 0.5); }
+.legend-qual { background-color: #00E5FF; box-shadow: 0 0 5px rgba(0, 229, 255, 0.5); }
+.legend-services-strike { background-color: #9D4EDD; box-shadow: 0 0 5px rgba(157, 78, 221, 0.5); }
+.legend-security { background-color: #1E90FF; box-shadow: 0 0 5px rgba(30, 144, 255, 0.5); }
+
+/* General Legend Container Styling */
+.legend-container {
+    scrollbar-width: none; /* Hides scrollbar for clean look */
+}
+.legend-container::-webkit-scrollbar { display: none; }
+
+/* Custom scrollbar for the library view */
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #ffcc00; }
+
+/* Animation for cards appearance */
+@keyframes slideUp {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.report-card {
+animation: slideUp 0.4s ease forwards;
+}
+
+/* Hide scrollbar for side menu */
+#main-nav {
+scrollbar-width: none;
+}
+#main-nav::-webkit-scrollbar {
+display: none;
+}
+
+/* Nested Navigation Items */
+.nav-sub-item.active {
+border-left: 4px solid var(--rj-yellow);
+background-color: var(--rj-charcoal);
+color: var(--rj-yellow);
+}
+
+.rotate-180 {
+transform: rotate(180deg);
+}
+
+/* EXCEL FIT: Gives wide Excel tables more room, then zooms them out to fit */
+.excel-wide-fit {
+    width: 150%;      /* Makes the iframe 50% wider */
+    height: 150%;     /* Makes the iframe taller to match */
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scale(0.745); /* Zooms the whole thing out by 34% so it fits in the box */
+    transform-origin: top left;
+}
