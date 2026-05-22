@@ -228,7 +228,36 @@
             "Site Reports": {
                 "gridClass": "grid-cols-3 grid-rows-2",
                 "visuals": [
-                    { "title": "Visual 1", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" }
+                    { "title": "ESG Target %", 
+                    "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=9d669cd30104cc59f63a", 
+                    "colSpan": 1, 
+                    "rowSpan": 1, 
+                    "size": "large",
+                    "legend": [
+                            { "label": "ESG Completed", "class": "legend-env-pos" },
+                            { "label": "ESG Not Completed", "class": "legend-env-neg" }
+                        ] 
+                    },
+                { "title": "Weekly H&S Target %", 
+                    "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=9608ad1467243aa70f29",                    "colSpan": 1, 
+                    "rowSpan": 1, 
+                    "size": "large",
+                    "legend": [
+                            { "label": "Weekly H&S Insp Completed", "class": "legend-safety-pos" },
+                            { "label": "Weekly H&S Insp Not Completed", "class": "legend-safety-neg" }
+                        ] 
+                    },
+                    { "title": "Workplace and Subcon Audits by Site", 
+                    "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=a59290522887521ad171",
+                    "colSpan": 1, 
+                    "rowSpan": 1, 
+                    "size": "large",
+                    "legend": [
+                            { "label": "SubCon Audits", "class": "legend-security" },
+                            { "label": "Workplace Inspections", "class": "legend-hipo" }
+                        ] 
+                    },  
+                    { "title": "Visual 1", "url": "", "colSpan": 3, "rowSpan": 1, "size": "large" }
                 ]
             },
             "QSET Audits": {
