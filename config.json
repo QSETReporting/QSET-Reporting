@@ -100,44 +100,82 @@
                         ] 
                     },
                     { 
-                        "title": "Reporting Lag in Hrs", 
-                        "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=e9c17d5da4e37a29c38e", 
-                        "colSpan": 1, 
-                        "rowSpan": 1, 
-                        "legend": [
-                            { "label": "Incident", "class": "legend-safety-pos" }
-                        ] 
-                    },
-                    { 
-                        "title": "Visual 4", 
-                        "url": "https://rjmcleod-my.sharepoint.com/personal/tcox_rjmcleod_co_uk/_layouts/15/Doc.aspx?sourcedoc={787b0b08-0290-46c4-9f84-a9da05694e5a}&action=embedview&Item=Gld_01_STC_Inspections&wdHideGridlines=True&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True&edaebf=rslc0&wdAllowInteractivity=True", 
-                        "colSpan": 2, 
-                        "rowSpan": 1, 
-                        "size": "excel-wide-fit" 
-                    },
-                    { 
                         "title": "Incident by Site", 
-                        "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=bc87fc854585c4638f2f", 
+                        "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=3bda6dc3a2b090ad3272", 
                         "colSpan": 1, 
                         "rowSpan": 1, 
                         "size": "large",
                         "legend": [
-                            { "label": "Incident", "class": "legend-safety-pos" }
+                            { "label": "Accident", "class": "legend-accident" },
+                            { "label": "Near Miss", "class": "legend-near-miss" },
+                            { "label": "Env", "class": "legend-env-pos" },
+                            { "label": "Services", "class": "legend-services-strike" },
+                            { "label": "Security", "class": "legend-security" }
+                        ] 
+                    },
+                    { 
+                        "title": "Visual 4", 
+                        "url": "https://app.powerbi.com/reportEmbed?reportId=25286176-1286-4f5a-9507-40f470a8aa32&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=7e660222b56d426b799c",
+                        "colSpan": 3, 
+                        "rowSpan": 1, 
+                        "size": "double width",
+                        "legend": [
+                            { "label": "Accident", "class": "legend-accident" },
+                            { "label": "Near Miss", "class": "legend-near-miss" },
+                            { "label": "Env", "class": "legend-env-pos" },
+                            { "label": "Quality", "class": "legend-qual" },
+                            { "label": "Services", "class": "legend-services-strike" },
+                            { "label": "Security", "class": "legend-security" }
                         ] 
                     }
                 ]
             },
-            "Env Quality": {
+            "Environmental and Safety SORs": {
                 "banner": {
                     "text": "View Open SORS",
                     "buttonText": "View",
-                    "action": "Env Quality",
+                    "action": "Environmental and Safety SORs",
                     "color": "#00E5FF"
                 },
                 "gridClass": "grid-cols-3 grid-rows-2",
                 "visuals": [
-                    { "title": "Visual 1", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" },
-                    { "title": "Visual 2", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" }
+                    { "title": "Environmental SORs", 
+                    "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=88d0c42d5ca5185fa4e1", 
+                    "colSpan": 1, 
+                    "rowSpan": 1, 
+                    "size": "large",
+                    "legend": [
+                            { "label": "Env Pos", "class": "legend-env-pos" },
+                            { "label": "Env Neg", "class": "legend-env-neg" }
+                        ] 
+                    },
+                    { "title": "Safety SORs", 
+                    "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=462c5f693cc5522af3ed", 
+                    "colSpan": 1, 
+                    "rowSpan": 1, 
+                    "size": "large",
+                    "legend": [
+                            { "label": "Safety Pos", "class": "legend-safety-pos" },
+                            { "label": "Safety Neg", "class": "legend-safety-neg" }
+                        ] 
+                    },                    
+                    { "title": "SORs by Site", 
+                    "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=bc6aa6b3229d2c74d577",
+                    "colSpan": 1, 
+                    "rowSpan": 1, 
+                    "size": "large",
+                    "legend": [
+                            { "label": "Safety Pos", "class": "legend-safety-pos" },
+                            { "label": "Safety Neg", "class": "legend-safety-neg" },
+                            { "label": "Env Pos", "class": "legend-env-pos" },
+                            { "label": "Env Neg", "class": "legend-env-neg" }
+                        ] 
+                    },        
+                    { "title": "SORS Breakdown by Type", 
+                    "url": "https://app.powerbi.com/reportEmbed?reportId=25286176-1286-4f5a-9507-40f470a8aa32&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=2aa1991bee1713e0569d", 
+                    "colSpan": 3, 
+                    "rowSpan": 1, 
+                    "size": "large" }
                 ]
             }
         }
