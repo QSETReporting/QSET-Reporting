@@ -33,36 +33,78 @@ async function init() {
 
 function renderAuthHandshake() {
     const container = document.getElementById('grid-container');
-    // Using the master report for the initial sign-in - this triggers the MSAL login prompt
     const masterUrl = "https://app.powerbi.com/reportEmbed?reportId=07520691-2dfd-4ecd-bcbb-2e7d735aba9b&autoAuth=true";
     
     // Clear navigation to focus on auth
     const navContainer = document.getElementById('main-nav');
-    if (navContainer) navContainer.innerHTML = '<div class="px-6 py-4 text-xs text-red-500 italic uppercase">Locked: Awaiting Handshake</div>';
+    if (navContainer) navContainer.innerHTML = '<div class="px-6 py-4 text-xs text-zinc-500 italic uppercase">System Locked</div>';
 
     container.innerHTML = `
-        <div class="col-span-full row-span-full flex flex-col items-center justify-center bg-zinc-900/50 border border-zinc-800 rounded-lg p-12 text-center animate-in fade-in duration-700">
-            <div class="w-16 h-16 border-b-2 border-[#ffcc00] rounded-full animate-spin mb-6"></div>
-            <h3 class="text-[#ffcc00] text-2xl font-black mb-2 uppercase italic tracking-tighter">Security Handshake Required</h3>
-            <p class="text-zinc-400 text-[10px] mb-8 uppercase tracking-[0.3em]">Establish Secure Link with Power BI Cloud Services</p>
+        <div class="col-span-full row-span-full absolute inset-0 flex items-center justify-center overflow-hidden animate-in fade-in duration-700">
             
-            <div class="w-full max-w-3xl h-80 bg-black border border-zinc-800 rounded overflow-hidden mb-6 shadow-2xl relative">
-                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
-                    <span class="text-zinc-500 text-[8px] uppercase tracking-widest">Sign-In Gateway Active</span>
-                 </div>
-                 <iframe src="${masterUrl}" class="w-full h-full border-none relative z-10"></iframe>
-            </div>
+            <div class="absolute inset-0 bg-[url('assets/background.png')] bg-cover bg-center bg-no-repeat opacity-90"></div>
             
-            <div class="flex flex-col items-center gap-4">
-                <p class="text-zinc-500 text-[9px] uppercase max-w-xs">Once the report loads above or you have completed the sign-in prompt, click the deployment trigger below.</p>
-                <button onclick="finalizeHandshake()" class="bg-[#ffcc00] text-black px-12 py-4 font-black uppercase text-xs tracking-[0.2em] hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,204,0,0.2)]">
-                    Handshake Complete - Deploy HUD
+            <div class="absolute inset-0 bg-black/20 shadow-[inset_0_0_120px_rgba(0,0,0,0.7)] pointer-events-none"></div>
+
+            <div id="custom-login-view" class="relative z-10 flex flex-col p-10 bg-[#1a1a1a]/95 border border-[#2d2d2d] rounded shadow-2xl w-full max-w-md animate-in slide-in-from-bottom-8 duration-500 backdrop-blur-sm">
+                <div class="text-center mb-8">
+                    <img src="assets/rjmcleod-ocu-company.avif" alt="RJ McLeod" class="h-12 w-auto object-contain mb-2 mx-auto">
+                    <p class="text-zinc-500 text-[9px] uppercase tracking-[0.3em] font-bold">QSET Command Center</p>
+                </div>
+
+                <div class="mb-5">
+                    <label class="block text-zinc-500 text-[9px] font-bold uppercase tracking-widest mb-2">Network ID / Email</label>
+                    <input type="text" class="w-full bg-[#0a0a0a] border border-[#2d2d2d] text-white px-4 py-3 text-sm focus:outline-none focus:border-[#ffcc00] transition-colors rounded-sm" placeholder="Enter credentials...">
+                </div>
+
+                <div class="mb-8">
+                    <label class="block text-zinc-500 text-[9px] font-bold uppercase tracking-widest mb-2">Security Key</label>
+                    <input type="password" class="w-full bg-[#0a0a0a] border border-[#2d2d2d] text-white px-4 py-3 text-sm focus:outline-none focus:border-[#ffcc00] transition-colors rounded-sm" placeholder="••••••••••••">
+                </div>
+
+                <button onclick="transitionToMicrosoftAuth()" class="w-full bg-[#ffcc00] text-black px-6 py-4 font-black uppercase text-xs tracking-[0.2em] hover:bg-white hover:scale-[1.02] transition-all shadow-[0_0_15px_rgba(255,204,0,0.15)]">
+                    Authenticate
                 </button>
             </div>
+
+            <div id="msal-handshake-view" class="hidden relative z-10 flex flex-col items-center justify-center bg-[#1a1a1a]/95 border border-[#2d2d2d] rounded-lg p-10 text-center shadow-2xl w-full max-w-3xl backdrop-blur-sm">
+                <div class="w-12 h-12 border-b-2 border-[#ffcc00] rounded-full animate-spin mb-6"></div>
+                <h3 class="text-[#ffcc00] text-xl font-black mb-2 uppercase italic tracking-tighter">Microsoft Secure Link</h3>
+                <p class="text-zinc-400 text-[10px] mb-6 uppercase tracking-[0.2em]">Verifying credentials with Power BI Cloud Services...</p>
+                
+                <div class="w-full h-72 bg-black border border-zinc-800 rounded overflow-hidden mb-6 relative">
+                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+                        <span class="text-zinc-500 text-[8px] uppercase tracking-widest">Awaiting Microsoft Verification</span>
+                     </div>
+                     <iframe src="${masterUrl}" class="w-full h-full border-none relative z-10"></iframe>
+                </div>
+                
+                <div class="flex flex-col items-center gap-3">
+                    <p class="text-zinc-500 text-[9px] uppercase max-w-xs">Once verification completes in the window above, deploy the interface.</p>
+                    <button onclick="finalizeHandshake()" class="bg-white text-black px-10 py-3 font-black uppercase text-[10px] tracking-[0.2em] hover:bg-[#ffcc00] transition-colors">
+                        Deploy HUD
+                    </button>
+                </div>
+            </div>
+
         </div>
     `;
 }
 
+// Ensure you keep your transition function here as well:
+function transitionToMicrosoftAuth() {
+    const loginView = document.getElementById('custom-login-view');
+    const msalView = document.getElementById('msal-handshake-view');
+    
+    // Add a quick fade out to the login box
+    loginView.classList.add('opacity-0', 'scale-95');
+    
+    setTimeout(() => {
+        loginView.classList.add('hidden');
+        msalView.classList.remove('hidden');
+        msalView.classList.add('animate-in', 'zoom-in-95', 'fade-in', 'duration-500');
+    }, 300); // Waits for the fade out before swapping
+}
 function finalizeHandshake() {
     isAuthorized = true;
     sessionStorage.setItem('rj_mcleod_auth', 'true');
