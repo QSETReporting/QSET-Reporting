@@ -9,55 +9,28 @@
             { "title": "Visual 5", "url": "", "colSpan": 1, "rowSpan": 1, "size": "large" }
         ]
     },
-    "Actions": {
+
+        "Actions": {
         "banner": {
             "text": "View Overdue Actions",
             "buttonText": "View",
             "action": "https://app.safetyculture.com/tasks",
             "color": "#FF3366"
         },
-        "gridClass": "grid-cols-3 grid-rows-2",
+        "gridClass": "grid-cols-4 grid-rows-2",
         "visuals": [
             {
                 "title": "To Do, Due and Overdue Actions",
-               "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=966aa6827b867e2eba5e",
-                "rowSpan": 1,
-                "size": "large",
+                "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=95ae53db9954dc5f5313",
+                "modalUrl": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=4f8d6403fcf39f6f4ac7",
+                "colSpan": 4, 
+                "rowSpan": 2,
+                "size": "table",
                 "legend": [
                     { "label": "Overdue", "class": "legend-env-neg" },
                     { "label": "Due", "class": "legend-safety-pos" },
                     { "label": "To Do", "class": "legend-env-pos" }
                 ]
-            },
-            {
-                "title": "Overdue Actions by Type",
-                "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=f5938693a141300f5edf",
-                "rowSpan": 1,
-                "size": "large",
-                "legend": [
-                    { "label": "Safety", "class": "legend-safety-pos" },
-                    { "label": "Env", "class": "legend-env-pos" },
-                    { "label": "Quality", "class": "legend-qual" }
-                ]
-            },
-            {
-                "title": "Overdue Actions by Site",
-                "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=74900050a25fc94ccceb",
-                "colSpan": 1,
-                "rowSpan": 1,
-                "size": "large",
-                "legend": [
-                    { "label": "Safety", "class": "legend-safety-pos" },
-                    { "label": "Env", "class": "legend-env-pos" },
-                    { "label": "Quality", "class": "legend-qual" }
-                ]
-            },
-            {
-                "title": "C",
-                "url": "https://app.powerbi.com/reportEmbed?reportId=25286176-1286-4f5a-9507-40f470a8aa32&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=e3a388c54afbb124c7b6",
-                "colSpan": 3,
-                "rowSpan": 1,
-                "size": "double width"
             }
         ]
     },
@@ -119,14 +92,7 @@
                         "colSpan": 3, 
                         "rowSpan": 1, 
                         "size": "double width",
-                        "legend": [
-                            { "label": "Accident", "class": "legend-accident" },
-                            { "label": "Near Miss", "class": "legend-near-miss" },
-                            { "label": "Env", "class": "legend-env-pos" },
-                            { "label": "Quality", "class": "legend-qual" },
-                            { "label": "Services", "class": "legend-services-strike" },
-                            { "label": "Security", "class": "legend-security" }
-                        ] 
+                        "cardType": "table"
                     }
                 ]
             },
@@ -175,7 +141,8 @@
                     "url": "https://app.powerbi.com/reportEmbed?reportId=25286176-1286-4f5a-9507-40f470a8aa32&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=2aa1991bee1713e0569d", 
                     "colSpan": 3, 
                     "rowSpan": 1, 
-                    "size": "large" }
+                    "size": "double width", 
+                    "cardType": "table" }
                 ]
             }
         }

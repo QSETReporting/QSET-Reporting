@@ -298,14 +298,60 @@ function renderStandardCard(container, vis) {
     const cleanParams = "&filterPaneEnabled=false&navContentPaneEnabled=false&chromeless=true";
     const finalUrl = vis.url.includes('filterPaneEnabled') ? vis.url : vis.url + cleanParams;
     
-    // Updated to catch 'excel-wide-fit'
+    // Catch 'excel-wide-fit' and standard sizes
     const cropClass = vis.size === 'small' ? 'pbi-small' : 
                       vis.size === 'medium' ? 'pbi-medium' : 
                       vis.size === 'double width' ? 'pbi-double-width' : 
                       vis.size === 'excel-wide-fit' ? 'excel-wide-fit' : 
                       'pbi-large';
 
-    // Generate Dynamic Legend HTML from JSON
+    // NEW LOGIC: Hollow Card for Tables (With Floating Legend & Modal)
+    if (vis.size === 'table') {
+        container.classList.add('table-card-slot');
+
+        // 1. Build the floating glassy legend (if provided)
+        const tableLegendHTML = vis.legend ? `
+            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-4 px-5 py-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-full shadow-lg pointer-events-none">
+                ${vis.legend.map(item => `
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <div class="w-2.5 h-2.5 rounded-full ${item.class}"></div>
+                        <span class="text-[9px] text-white font-black uppercase tracking-widest text-shadow-sm">${item.label}</span>
+                    </div>
+                `).join('')}
+            </div>
+        ` : '';
+
+        // 2. Build the top-right icon and 80% Modal Overlay (if modalUrl is provided)
+        const modalHTML = vis.modalUrl ? `
+            <button onclick="this.nextElementSibling.classList.remove('hidden')" class="absolute top-4 right-4 z-20 bg-black/60 hover:bg-[#ffcc00] text-zinc-400 hover:text-black p-2 rounded backdrop-blur-sm transition-all border border-zinc-700/50 hover:border-[#ffcc00] shadow-lg cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+            </button>
+            
+            <div class="hidden absolute inset-0 z-30 flex items-center justify-center bg-black/80 backdrop-blur-sm transition-all animate-in fade-in duration-200">
+                <div class="relative w-[80%] h-[80%] bg-[#18181b] border border-[#2d2d2d] rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">
+                    <div class="h-10 bg-[#111] border-b border-[#2d2d2d] flex justify-between items-center px-4 shrink-0">
+                        <span class="text-[10px] font-black uppercase text-[#ffcc00] tracking-widest">Deep Dive Analysis</span>
+                        <button onclick="this.closest('.absolute.inset-0').classList.add('hidden')" class="text-zinc-500 hover:text-red-500 transition-colors p-1 cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                    <iframe src="${vis.modalUrl.includes('filterPaneEnabled') ? vis.modalUrl : vis.modalUrl + cleanParams}" class="w-full flex-1 border-none bg-black/20" scrolling="no"></iframe>
+                </div>
+            </div>
+        ` : '';
+
+        // 3. Inject everything into the table card
+        container.innerHTML = `
+            ${modalHTML}
+            <div class="pbi-viewport w-full h-full relative z-10">
+                ${vis.url ? `<iframe title="${vis.title}" class="${cropClass}" src="${finalUrl}" scrolling="no"></iframe>` : `<div class="visual-placeholder">Awaiting...</div>`}
+            </div>
+            ${tableLegendHTML}
+        `;
+        return; // Exit the function early!
+    }
+
+    // --- STANDARD CARD LOGIC (For normal charts) ---
     const legendHTML = vis.legend ? `
         <div class="h-6 mt-1 flex items-center gap-2 px-3 bg-zinc-900/50 border border-zinc-800/50 rounded shadow-inner overflow-x-auto no-scrollbar">
             ${vis.legend.map(item => `
@@ -321,12 +367,9 @@ function renderStandardCard(container, vis) {
         <div class="card-header">${vis.title}</div>
         
         <div class="flex-1 flex flex-col p-4 overflow-hidden">
-            <!-- The Visual Viewport -->
-            <div class="pbi-viewport flex-1 border border-zinc-800 rounded bg-black/20 overflow-hidden relative">
+            <div class="pbi-viewport flex-1 rounded overflow-hidden relative">
                 ${vis.url ? `<iframe title="${vis.title}" class="${cropClass}" src="${finalUrl}" scrolling="no"></iframe>` : `<div class="visual-placeholder">Awaiting...</div>`}
             </div>
-
-            <!-- Dynamic Legend Space -->
             ${legendHTML}
         </div>
     `;
@@ -389,19 +432,37 @@ function renderNavigation() {
     if (!navContainer) return;
     navContainer.innerHTML = '';
     
+    // A simple map to assign an icon based on the menu name
+    const getIcon = (name) => {
+        const icons = {
+            'overview': `<svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>`,
+            'actions': `<svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>`,
+            'default': `<svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>`
+        };
+        const key = name.toLowerCase().split(' ')[0];
+        return icons[key] || icons['default'];
+    };
+
     Object.keys(PAGE_CONFIG).forEach(key => {
         const config = PAGE_CONFIG[key];
+        const cleanKey = key.replace(/[^a-zA-Z0-9]/g, '');
         
         if (config.type === 'parent') {
-            const parentId = `parent-${key.replace(/[^a-zA-Z0-9]/g, '')}`;
+            const parentId = `parent-${cleanKey}`;
             
             // Render the clickable parent accordion header
             const parentDiv = document.createElement('div');
-            parentDiv.className = 'nav-parent group flex items-center justify-between px-4 py-3 cursor-pointer text-[#ffcc00] hover:text-[#ffcc00] hover:bg-zinc-800 transition-colors border-l-4 border-transparent font-bold uppercase text-[0.8rem] tracking-[1px]';
+            // Check if any of its children are currently active
+            const isChildActive = config.children && config.children[currentPage] != null;
+            
+            parentDiv.className = `nav-item-base nav-parent group ${isChildActive ? 'text-white' : ''}`;
             parentDiv.onclick = () => toggleNavParent(parentId);
             parentDiv.innerHTML = `
-                <span>${key}</span>
-                <svg class="chevron w-3 h-3 transition-transform duration-200 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center">
+                    ${getIcon(key)}
+                    <span>${key}</span>
+                </div>
+                <svg class="chevron w-3 h-3 transition-transform duration-200 ${isChildActive ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
             `;
@@ -409,16 +470,19 @@ function renderNavigation() {
             // Render the container for children
             const childrenContainer = document.createElement('div');
             childrenContainer.id = parentId;
-            childrenContainer.className = 'nav-children flex flex-col bg-[#0f0f0f] border-y border-zinc-900 shadow-inner';
+            childrenContainer.className = `nav-children flex flex-col ${isChildActive ? '' : 'hidden'}`;
             
             // Loop through and render children
             Object.keys(config.children).forEach(childKey => {
                 const childItem = document.createElement('div');
                 childItem.id = `nav-${childKey.replace(/[^a-zA-Z0-9]/g, '')}`;
-                childItem.className = 'nav-sub-item pl-8 py-2.5 cursor-pointer text-[#666] hover:text-[#ffcc00] hover:bg-[#151515] transition-colors border-l-4 border-transparent font-bold uppercase text-[0.7rem] tracking-[1px]';
+                
+                const isActive = currentPage === childKey;
+                childItem.className = `nav-item-base nav-sub-item ${isActive ? 'nav-active' : ''}`;
+                
                 childItem.innerText = childKey;
                 childItem.onclick = (e) => {
-                    e.stopPropagation(); // Prevents parent from collapsing when child is clicked
+                    e.stopPropagation(); 
                     if(isAuthorized) switchPage(childKey);
                 };
                 childrenContainer.appendChild(childItem);
@@ -428,11 +492,17 @@ function renderNavigation() {
             navContainer.appendChild(childrenContainer);
             
         } else {
-            // Render standalone item (like Overview or Actions)
+            // Render standalone item (like Overview)
             const navItem = document.createElement('div');
-            navItem.id = `nav-${key.replace(/[^a-zA-Z0-9]/g, '')}`;
-            navItem.className = 'nav-item';
-            navItem.innerText = key;
+            navItem.id = `nav-${cleanKey}`;
+            
+            const isActive = currentPage === key;
+            navItem.className = `nav-item-base ${isActive ? 'nav-active' : ''}`;
+            
+            navItem.innerHTML = `
+                ${getIcon(key)}
+                <span>${key}</span>
+            `;
             navItem.onclick = () => isAuthorized && switchPage(key);
             navContainer.appendChild(navItem);
         }

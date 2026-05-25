@@ -24,110 +24,162 @@ width: 100vw;
 overflow: hidden;
 }
 
-/* Sidebar Navigation - The Strategic Flank */
+/* Sidebar Navigation - The Modernized Flank */
 .sidebar {
-background-color: var(--rj-black);
-border-right: 1px solid var(--rj-grey);
+    background-color: #1a1a1a; /* Lighter background for the sidebar to match reference */
+    border-right: 1px solid #2d2d2d;
+    padding: 1rem 0.5rem; /* Add some padding so items don't touch the edges */
 }
 
-.nav-item {
-border-left: 4px solid transparent;
-transition: all 0.2s ease-in-out;
-color: #a0a0a0;
-cursor: pointer;
-padding: 1rem;
-font-weight: 700;
-text-transform: uppercase;
-font-size: 0.8rem;
-letter-spacing: 1px;
+/* Base styling for all nav items (parents, standalone, and children) */
+.nav-item-base {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    margin-bottom: 0.25rem;
+    color: #a0a0a0;
+    cursor: pointer;
+    font-weight: 500; /* Softer font weight */
+    font-size: 0.85rem;
+    border-radius: 8px; /* Rounded pill shape */
+    transition: all 0.2s ease;
+    text-transform: capitalize; /* Removed harsh uppercase */
+    letter-spacing: 0.5px;
 }
 
-.nav-item:hover {
-background-color: var(--rj-grey);
-color: var(--rj-yellow);
+.nav-item-base:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.05); /* Very subtle hover effect */
 }
 
-.nav-item.active {
-border-left: 4px solid var(--rj-yellow);
-background-color: var(--rj-charcoal);
-color: var(--rj-yellow);
+/* Active State - The Yellow Pill */
+.nav-active {
+    background-color: var(--rj-yellow) !important;
+    color: #000000 !important;
+    font-weight: 700;
 }
 
-/* Card Structures */
+/* Adjusting the specific parent/child containers */
+.nav-parent {
+    justify-content: space-between;
+}
+
+/* Remove the heavy black background and borders from children container */
+.nav-children {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding-left: 1.5rem; /* Indent the children */
+    margin-top: 0.25rem;
+}
+
+/* Styling for the child items */
+.nav-sub-item {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    color: #888888;
+}
+
+.nav-sub-item:hover {
+    color: #ffffff;
+}
+
+/* Card Structures - The Modern App Look */
 .card-slot {
-background-color: var(--rj-charcoal);
-border: 1px solid var(--rj-grey);
-border-radius: var(--border-radius);
-position: relative;
-overflow: hidden;
-display: flex;
-flex-direction: column;
+    background-color: #18181b; /* Soft, matte dark grey instead of stark black */
+    border: 1px solid #ffffff80; /* Very subtle, low-contrast border */
+    border-radius: 16px; /* Smooth, large rounded corners */
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Soft ambient shadow */
 }
 
 .card-header {
-background: #111;
-padding: 8px 14px;
-font-size: 0.7rem;
-text-transform: uppercase;
-letter-spacing: 1.5px;
-color: #777;
-font-weight: 900;
-border-bottom: 1px solid var(--rj-grey);
-flex-shrink: 0;
-}
-
-.construction-yellow {
-color: var(--rj-yellow);
+    background: transparent; /* Strips away the heavy background block */
+    padding: 18px 20px 4px 20px; /* Aligns the header nicely with the inner content */
+    font-size: 1.05rem; /* Slightly larger, app-style header */
+    text-transform: none; /* Removes the harsh ALL CAPS */
+    letter-spacing: 0.5px;
+    color: #f4f4f5; /* Soft white */
+    font-weight: 600;
+    border-bottom: none; /* Removes the dividing line */
+    flex-shrink: 0;
 }
 
 /* --- THE CENTERING ARMORY --- */
 
 /* Wrapper for the iframe viewports */
 .pbi-viewport {
-width: 100%;
-height: 100%;
-overflow: hidden;
-position: relative;
-background: #000;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    background: transparent !important; /* Forces the harsh black background off */
+    border: none !important; /* Removes inner borders to let the visual breathe */
+    border-radius: 8px; /* Slightly rounds the edges of the visuals themselves */
+}
+/* --- TABLE CARD OVERRIDES --- */
+/* This targets the main container when "size": "table" is used in the JSON */
+.table-card-slot {
+    padding: 0;
 }
 
-.pbi-double-width {
-width: 100%;
-height: 116%; /* Adjusted for wider view */
-margin-top: 10px; /* Centering tweak */
-left: -65%;
-transform: scale(1);
-transform-origin: top left;
+/* This specifically targets the inner viewport of a table card */
+.table-card-slot .pbi-viewport {
+    width: 100%;
+    height: 100%;
+    border-radius: 16px; 
+    background: transparent !important;
 }
+.table-card-slot .pbi-large {
+    width: 100%;
+    height: 110%; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scale(1);
+    transform-origin: top left;
+}
+.pbi-double-width {
+    width: 100%;
+    height: 150%;
+    margin-top: 0px;
+    left: -65%;
+    transform: scale(1);
+    transform-origin: top left;
+}
+
 /* LARGE: For full-width "Action Analysis" or Major Visuals */
 .pbi-large {
-width: 100%;
-height: 140%;
-position: absolute;
-top: -39px;
-left: 0;
+    width: 100%;
+    height: 140%;
+    position: absolute;
+    top: -39px;
+    left: 0;
 }
 
 /* MEDIUM: For "ROT Trend" (Uses 50% scale zoom to fit wide data into small slots) */
 .pbi-medium {
-width: 200%;
-height: 500%;
-position: absolute;
-top: -126%;
-left: -25%;
-transform: scale(0.75);
-transform-origin: top left;
+    width: 200%;
+    height: 500%;
+    position: absolute;
+    top: -126%;
+    left: -25%;
+    transform: scale(0.75);
+    transform-origin: top left;
 }
 
 /* SMALL: For "Overdue Count" (The "Boxy" portrait crop for 1.1 visuals) */
 .pbi-small {
-width: 200%;
-height: 280%;
-position: absolute;
-top: -118px;
-left: -97%;
-transform: scale(1.5);
-transform-origin: top left;
+    width: 200%;
+    height: 280%;
+    position: absolute;
+    top: -118px;
+    left: -97%;
+    transform: scale(1.5);
+    transform-origin: top left;
 }
 
 /* --- SUB-ELEMENTS LABELS --- */
