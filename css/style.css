@@ -308,3 +308,38 @@ body.expanded-terminal #tabbed-report-viewport {
     width: 100% !important;
     height: 100% !important;
 }
+
+/* =========================================================================
+   THE FOOTER BANISHMENT: SOLIDIFYING THE CROP GEOMETRY
+   ========================================================================= */
+
+/* 1. Ensure the layout container locks the perimeter with no escape scrollbars */
+#grid-container,
+main,
+.flex-1.bg-black.relative {
+    overflow: hidden !important;
+}
+
+/* 2. Push the iframe further down into the abyss */
+#tabbed-report-viewport {
+    width: 100% !important;
+    
+    /* Increased from 40px to 55px to ensure the entire grey lip clears the viewport */
+    height: calc(100% + 55px) !important; 
+    
+    position: relative;
+    top: 0;
+    left: 0;
+    border: none !important;
+    display: block;
+}
+
+/* 3. Maintain the drop when maxed out in Full Screen mode */
+body.expanded-terminal {
+    overflow: hidden !important;
+}
+
+body.expanded-terminal #tabbed-report-viewport {
+    width: 100% !important;
+    height: calc(100vh + 55px) !important; 
+}
