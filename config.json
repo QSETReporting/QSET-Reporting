@@ -67,8 +67,7 @@
             {
                 "title": "To Do, Due and Overdue Actions",
                 "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=94eacc91b331887f4e6d",
-                "modalUrl": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=4f8d6403fcf39f6f4ac7",
-                "colSpan": 4, 
+                "modalUrl": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=618a99ff3864ddce04bc",                "colSpan": 4, 
                 "rowSpan": 2,
                 "size": "table"
             }
@@ -105,13 +104,27 @@
             "Reporting": {
                 "type": "library",
                 "library": [
-                    {
-                        "id": "01_STC_INC_Rep",
-                        "title": "Weekly Incident Report",
-                        "category": "Incident",
-                        "desc": "Round up of all safety incidents, near misses, and environmental events from the past week.",
-                        "url": "https://rjmcleod-my.sharepoint.com/personal/tcox_rjmcleod_co_uk/_layouts/15/Doc.aspx?sourcedoc={ee2bea94-d8e4-4f34-82d7-2023948a5315}&action=embedview&Item=Gld_01_STC_Inspections&wdHideGridlines=True&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True&edaebf=rslc0&wdAllowInteractivity=True"
-                    },
+                {
+                    "id": "01_STC_INC_Rep",
+                    "title": "Weekly Incident Report",
+                    "category": "Incident",
+                    "desc": "Round up of all safety incidents, near misses, and environmental events from the past week.",
+                    "isTabbed": true,
+                    "tabs": [
+                        {
+                            "tabTitle": "Incident Overview",
+                            "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=33496f253552c9799568"
+                        },
+                        {
+                            "tabTitle": "Deep Dive Analysis",
+                            "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=618a99ff3864ddce04bc"
+                        },
+                        {
+                            "tabTitle": "SharePoint Raw Log",
+                            "url": "https://rjmcleod-my.sharepoint.com/personal/tcox_rjmcleod_co_uk/_layouts/15/Doc.aspx?sourcedoc={0cae24c0-d998-4030-ba14-0a0ba05df427}&action=embedview&wdAllowInteractivity=True&wdHideGridlines=True&wdHideHeaders=True&wdDownloadButton=True&wdInConfigurator=True"
+                        }
+                    ]
+                },
                     {
                         "id": "00_AST_McL39",
                         "title": "McL39",
@@ -121,41 +134,25 @@
                     }
                 ]
             },
-            "Site Reports": {
-                "gridClass": "grid-cols-3 grid-rows-2",
-                "visuals": [
-                    { "title": "ESG Target %", 
-                    "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=9d669cd30104cc59f63a", 
-                    "colSpan": 1, 
-                    "rowSpan": 1, 
-                    "size": "large",
-                    "legend": [
-                            { "label": "ESG Completed", "class": "legend-env-pos" },
-                            { "label": "ESG Not Completed", "class": "legend-env-neg" }
-                        ] 
-                    },
-                { "title": "Weekly H&S Target %", 
-                    "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=9608ad1467243aa70f29",                    "colSpan": 1, 
-                    "rowSpan": 1, 
-                    "size": "large",
-                    "legend": [
-                            { "label": "Weekly H&S Insp Completed", "class": "legend-safety-pos" },
-                            { "label": "Weekly H&S Insp Not Completed", "class": "legend-safety-neg" }
-                        ] 
-                    },
-                    { "title": "Workplace and Subcon Audits by Site", 
-                    "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=a59290522887521ad171",
-                    "colSpan": 1, 
-                    "rowSpan": 1, 
-                    "size": "large",
-                    "legend": [
-                            { "label": "SubCon Audits", "class": "legend-security" },
-                            { "label": "Workplace Inspections", "class": "legend-hipo" }
-                        ] 
-                    },  
-                    { "title": "Visual 1", "url": "", "colSpan": 3, "rowSpan": 1, "size": "large" }
-                ]
-            },
+        "Site Reports": {
+            "banner": {
+            "text": "View Overdue Actions",
+            "buttonText": "View",
+            "action": "https://app.safetyculture.com/tasks",
+            "color": "#FF3366"
+        },
+        "gridClass": "grid-cols-4 grid-rows-2",
+        "visuals": [
+            {
+                "title": "To Do, Due and Overdue Actions",
+                "url": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=4e83a7bdc44d54d17eda",
+                "modalUrl": "https://app.powerbi.com/reportEmbed?reportId=551fc542-d060-4362-bf17-bce4864816cc&autoAuth=true&ctid=9227dc2c-b4a3-455e-b4f5-cbd89efd281a&pageName=4f8d6403fcf39f6f4ac7",
+                "colSpan": 4, 
+                "rowSpan": 2,
+                "size": "table"
+            }
+        ]
+    },
             "QSET Audits": {
                 "gridClass": "grid-cols-3 grid-rows-2",
                 "visuals": [

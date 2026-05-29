@@ -6,6 +6,7 @@ let currentPage = 'Overview';
 /**
  * STREAMING_CHUNK: Fetching Intelligence Vault...
  * Note: Relative path 'config.json' is used for portability.
+ * 20_SQL_Architecture_Metadata_Gld
  */
 async function init() {
     try {
@@ -91,28 +92,26 @@ function renderAuthHandshake() {
     `;
 }
 
-// Ensure you keep your transition function here as well:
 function transitionToMicrosoftAuth() {
     const loginView = document.getElementById('custom-login-view');
     const msalView = document.getElementById('msal-handshake-view');
     
-    // Add a quick fade out to the login box
     loginView.classList.add('opacity-0', 'scale-95');
     
     setTimeout(() => {
         loginView.classList.add('hidden');
         msalView.classList.remove('hidden');
         msalView.classList.add('animate-in', 'zoom-in-95', 'fade-in', 'duration-500');
-    }, 300); // Waits for the fade out before swapping
+    }, 300);
 }
+
 function finalizeHandshake() {
     isAuthorized = true;
     sessionStorage.setItem('rj_mcleod_auth', 'true');
-    renderNavigation(); // Restore the actual nav
+    renderNavigation();
     switchPage(currentPage);
 }
 
-// NEW: Dynamically checks the config for the current page and injects/removes the banner
 function updateBanner(config) {
     const gridContainer = document.getElementById('grid-container');
     let banner = document.getElementById('dynamic-alert-banner');
@@ -139,7 +138,6 @@ function updateBanner(config) {
     banner.style.borderColor = '#ffffff30';
     banner.style.color = 'white';
     
-    // NEW LOGIC: If the action starts with 'http', open in a new tab. Otherwise, switch internal page.
     const clickBehavior = targetAction.startsWith('http') 
         ? `window.open('${targetAction}', '_blank')` 
         : `switchPage('${targetAction}')`;
@@ -166,7 +164,6 @@ function getPageConfig(pageName) {
         return PAGE_CONFIG[pageName];
     }
     
-    // Search within parents
     for (const key in PAGE_CONFIG) {
         if (PAGE_CONFIG[key].type === 'parent' && PAGE_CONFIG[key].children[pageName]) {
             return PAGE_CONFIG[key].children[pageName];
@@ -178,24 +175,24 @@ function getPageConfig(pageName) {
 function switchPage(pageName) {
     if (!isAuthorized) return renderAuthHandshake();
     
+    // Safety check: clear any active fullscreen expansions when returning to standard operational grid layouts
+    document.body.classList.remove('expanded-terminal');
+    
     currentPage = pageName;
     document.querySelectorAll('.nav-item, .nav-sub-item').forEach(el => el.classList.remove('active'));
     
-    // Using a more robust regex replacement to handle symbols like & and /
     const navId = `nav-${pageName.replace(/[^a-zA-Z0-9]/g, '')}`;
     if (document.getElementById(navId)) document.getElementById(navId).classList.add('active');
 
     const titleEl = document.getElementById('page-title');
     if (titleEl) titleEl.innerText = `${pageName.toUpperCase()}`;
 
-    // Branching logic based on page type using the nested lookup
     const config = getPageConfig(pageName);
     if (!config) {
         console.warn(`Configuration not found for: ${pageName}`);
         return;
     }
 
-    // Trigger the dynamic banner system
     updateBanner(config);
     
     if (config.type === 'library') {
@@ -207,12 +204,11 @@ function switchPage(pageName) {
 
 function renderReportsLibrary(reports) {
     const container = document.getElementById('grid-container');
-    // Switch to a scrollable layout for the library
     container.className = "flex-1 p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto bg-black scrollbar-thin";
     
-    container.innerHTML = reports.map(rpt => `
-        <div class="group relative bg-zinc-900/30 border border-zinc-800 p-6 rounded hover:border-[#ffcc00] transition-all cursor-pointer flex flex-col h-64" 
-             onclick="launchFullReport('${rpt.url}', '${rpt.title}')">
+    container.innerHTML = reports.map((rpt, idx) => `
+        <div class="report-card group relative bg-zinc-900/30 border border-zinc-800 p-6 rounded hover:border-[#ffcc00] transition-all cursor-pointer flex flex-col h-64" 
+             data-index="${idx}">
             <div class="flex justify-between items-start mb-4">
                 <span class="text-[10px] text-[#ffcc00] font-mono font-bold">${rpt.id}</span>
                 <span class="text-[8px] px-2 py-0.5 bg-zinc-800 text-zinc-400 uppercase font-black tracking-widest rounded">${rpt.category}</span>
@@ -220,62 +216,128 @@ function renderReportsLibrary(reports) {
             <h3 class="text-white font-black uppercase italic tracking-tighter text-xl group-hover:text-[#ffcc00] transition-colors leading-tight mb-2">${rpt.title}</h3>
             <p class="text-[11px] text-zinc-500 leading-relaxed flex-1">${rpt.desc || 'System report access terminal.'}</p>
             <div class="mt-4 flex items-center justify-between border-t border-zinc-800 pt-4">
-                <span class="text-[9px] font-black uppercase text-zinc-600 tracking-widest">Secure Link</span>
+                <span class="text-[9px] font-black uppercase text-zinc-600 tracking-widest">
+                    ${rpt.isTabbed ? 'MULTI-VIEW TERMINAL' : 'SECURE LINK'}
+                </span>
                 <span class="text-[10px] font-black uppercase text-[#ffcc00] opacity-0 group-hover:opacity-100 transition-all">Initialize →</span>
             </div>
         </div>
     `).join('');
+
+    container.querySelectorAll('.report-card').forEach(card => {
+        card.onclick = function() {
+            const index = this.getAttribute('data-index');
+            const targetReport = reports[index];
+
+            if (targetReport.isTabbed) {
+                launchFullReport(targetReport);
+            } else {
+                launchFullReport(targetReport.url, targetReport.title);
+            }
+        };
+    });
 }
 
-function launchFullReport(url, title) {
+function launchFullReport(reportObjOrUrl, title = '') {
     const container = document.getElementById('grid-container');
+    const cleanParams = "&filterPaneEnabled=false&navContentPaneEnabled=false&chromeless=true";
     
-    /**
-     * Processing URL for Deployment...
-     * We determine if this is a Power BI report, an Excel file, or a local asset.
-     */
-    let finalUrl = url;
-    const isPowerBI = url.includes('powerbi.com');
-    const isExcel = url.includes('sharepoint.com') || url.includes('onedrive.live.com');
-    const isLocal = url.endsWith('.html') || !url.startsWith('http');
-
-    if (isPowerBI) {
-        // Append Power BI specific navigation and filter params
-        finalUrl += "&navContentPaneEnabled=true&filterPaneEnabled=false";
-    } else if (isExcel) {
-        // Clean Excel URLs of hardcoded dimensions to allow full-screen expansion
-        finalUrl = url.replace(/&wdInW=\d+/g, '').replace(/&wdInH=\d+/g, '');
-        // Force interactivity if not present
-        if (!finalUrl.includes('wdAllowInteractivity')) finalUrl += "&wdAllowInteractivity=True";
+    let isTabbed = false;
+    let reportTabs = [];
+    
+    if (typeof reportObjOrUrl === 'object' && reportObjOrUrl.isTabbed) {
+        isTabbed = true;
+        reportTabs = reportObjOrUrl.tabs;
+        title = reportObjOrUrl.title;
+    } else {
+        reportTabs = [{ tabTitle: title, url: reportObjOrUrl }];
     }
-    // Note: Local assets (like Site Map) are passed through without modification to avoid breaking links
+
+    reportTabs = reportTabs.map(tab => {
+        let finalUrl = tab.url;
+        if (finalUrl.includes('powerbi.com') && !finalUrl.includes('filterPaneEnabled')) {
+            finalUrl += cleanParams;
+        } else if (finalUrl.includes('sharepoint.com') || finalUrl.includes('onedrive.live.com')) {
+            finalUrl = finalUrl.replace(/&wdInW=\d+/g, '').replace(/&wdInH=\d+/g, '');
+            if (!finalUrl.includes('wdAllowInteractivity')) finalUrl += "&wdAllowInteractivity=True";
+        }
+        return { ...tab, url: finalUrl };
+    });
 
     container.className = "flex-1 flex flex-col bg-black overflow-hidden p-0 animate-in fade-in zoom-in-95 duration-500";
+    
     container.innerHTML = `
         <div class="h-10 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between px-4 shrink-0">
             <div class="flex items-center gap-4">
-                <button onclick="switchPage(currentPage)" class="text-[10px] text-zinc-400 hover:text-[#ffcc00] uppercase font-black tracking-widest flex items-center gap-2 transition-colors">
+                <button onclick="switchPage(currentPage)" class="text-[10px] text-zinc-400 hover:text-[#ffcc00] uppercase font-black tracking-widest flex items-center gap-2 transition-colors cursor-pointer">
                     ← Exit Terminal
                 </button>
                 <div class="h-4 w-[1px] bg-zinc-700"></div>
                 <span class="text-[10px] text-[#ffcc00] font-mono uppercase animate-pulse">
-                    ${isLocal ? 'TACTICAL OVERLAY' : 'LIVE ACCESS'} // ${title}
+                    LIVE ACCESS // ${title}
                 </span>
             </div>
-            <span class="text-[9px] text-zinc-600 font-mono">${isLocal ? 'LOCAL_ASSET_MOUNTED' : 'SECURE_TUNNEL_ACTIVE'}</span>
+            
+            <div class="flex items-center gap-4">
+                <span class="text-[9px] text-zinc-600 font-mono hidden sm:inline">SECURE_TUNNEL_ACTIVE</span>
+                <div class="h-4 w-[1px] bg-zinc-800 hidden sm:inline"></div>
+                
+                <button onclick="toggleTerminalExpansion(this)" class="bg-zinc-950 hover:bg-[#ffcc00] text-zinc-500 hover:text-black border border-zinc-800 hover:border-[#ffcc00] px-3 py-1 text-[9px] font-black uppercase tracking-widest transition-all rounded-sm flex items-center gap-1.5 cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                    </svg>
+                    <span id="fullscreen-btn-text">Full Screen</span>
+                </button>
+            </div>
         </div>
-        <div class="flex-1 bg-black">
-            <iframe src="${finalUrl}" class="w-full h-full border-none shadow-2xl"></iframe>
+        
+        <div class="flex-1 bg-black relative">
+            <iframe id="tabbed-report-viewport" src="${reportTabs[0].url}" class="w-full h-full border-none shadow-2xl bg-transparent"></iframe>
+        </div>
+        
+        <div id="terminal-tab-bar" class="${isTabbed ? 'h-10' : 'hidden'} bg-zinc-950 border-t border-zinc-900 flex items-center gap-1 px-4 shrink-0">
+            ${reportTabs.map((tab, idx) => `
+                <button onclick="switchTerminalTab(this, '${tab.url}')" 
+                        class="terminal-tab-btn px-4 h-full text-[10px] uppercase tracking-wider font-black border-t-2 transition-all cursor-pointer ${idx === 0 ? 'border-[#ffcc00] text-[#ffcc00] bg-zinc-900/40' : 'border-transparent text-zinc-500 hover:text-zinc-300'}">
+                    ${tab.tabTitle}
+                </button>
+            `).join('')}
         </div>
     `;
 }
+
+// Global control handle to switch fullscreen view
+window.toggleTerminalExpansion = function(btnElement) {
+    const isExpanded = document.body.classList.toggle('expanded-terminal');
+    const btnText = document.getElementById('fullscreen-btn-text');
+    
+    if (isExpanded) {
+        if (btnText) btnText.innerText = "Minimize Layout";
+        btnElement.classList.add('bg-[#ffcc00]', 'text-black', 'border-[#ffcc00]');
+    } else {
+        if (btnText) btnText.innerText = "Full Screen";
+        btnElement.classList.remove('bg-[#ffcc00]', 'text-black', 'border-[#ffcc00]');
+    }
+};
+
+window.switchTerminalTab = function(btnElement, targetUrl) {
+    const iframe = document.getElementById('tabbed-report-viewport');
+    if (iframe) iframe.src = targetUrl;
+    
+    document.querySelectorAll('.terminal-tab-btn').forEach(btn => {
+        btn.classList.remove('border-[#ffcc00]', 'text-[#ffcc00]', 'bg-zinc-900/40');
+        btn.classList.add('border-transparent', 'text-zinc-500');
+    });
+    
+    btnElement.classList.remove('border-transparent', 'text-zinc-500');
+    btnElement.classList.add('border-[#ffcc00]', 'text-[#ffcc00]', 'bg-zinc-900/40');
+};
 
 function renderDynamicGrid(pageName, passedConfig = null) {
     const container = document.getElementById('grid-container');
     const config = passedConfig || getPageConfig(pageName);
     if (!container || !config) return;
 
-    // Apply the grid layout specified in the JSON
     container.className = `flex-1 p-6 grid gap-4 overflow-hidden bg-black ${config.gridClass}`;
     container.innerHTML = '';
 
@@ -298,18 +360,15 @@ function renderStandardCard(container, vis) {
     const cleanParams = "&filterPaneEnabled=false&navContentPaneEnabled=false&chromeless=true";
     const finalUrl = vis.url.includes('filterPaneEnabled') ? vis.url : vis.url + cleanParams;
     
-    // Catch 'excel-wide-fit' and standard sizes
     const cropClass = vis.size === 'small' ? 'pbi-small' : 
                       vis.size === 'medium' ? 'pbi-medium' : 
                       vis.size === 'double width' ? 'pbi-double-width' : 
                       vis.size === 'excel-wide-fit' ? 'excel-wide-fit' : 
                       'pbi-large';
 
-    // NEW LOGIC: Hollow Card for Tables (With Floating Legend & Modal)
     if (vis.size === 'table') {
         container.classList.add('table-card-slot');
 
-        // 1. Build the floating glassy legend (if provided)
         const tableLegendHTML = vis.legend ? `
             <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-4 px-5 py-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-full shadow-lg pointer-events-none">
                 ${vis.legend.map(item => `
@@ -321,7 +380,6 @@ function renderStandardCard(container, vis) {
             </div>
         ` : '';
 
-        // 2. Build the top-right icon and 80% Modal Overlay (if modalUrl is provided)
         const modalHTML = vis.modalUrl ? `
             <button onclick="this.nextElementSibling.classList.remove('hidden')" class="absolute top-4 right-4 z-20 bg-black/60 hover:bg-[#ffcc00] text-zinc-400 hover:text-black p-2 rounded backdrop-blur-sm transition-all border border-zinc-700/50 hover:border-[#ffcc00] shadow-lg cursor-pointer">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
@@ -340,7 +398,6 @@ function renderStandardCard(container, vis) {
             </div>
         ` : '';
 
-        // 3. Inject everything into the table card
         container.innerHTML = `
             ${modalHTML}
             <div class="pbi-viewport w-full h-full relative z-10">
@@ -348,10 +405,9 @@ function renderStandardCard(container, vis) {
             </div>
             ${tableLegendHTML}
         `;
-        return; // Exit the function early!
+        return;
     }
 
-    // --- STANDARD CARD LOGIC (For normal charts) ---
     const legendHTML = vis.legend ? `
         <div class="h-6 mt-1 flex items-center gap-2 px-3 bg-zinc-900/50 border border-zinc-800/50 rounded shadow-inner overflow-x-auto no-scrollbar">
             ${vis.legend.map(item => `
@@ -432,7 +488,6 @@ function renderNavigation() {
     if (!navContainer) return;
     navContainer.innerHTML = '';
     
-    // A simple map to assign an icon based on the menu name
     const getIcon = (name) => {
         const icons = {
             'overview': `<svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>`,
@@ -449,10 +504,7 @@ function renderNavigation() {
         
         if (config.type === 'parent') {
             const parentId = `parent-${cleanKey}`;
-            
-            // Render the clickable parent accordion header
             const parentDiv = document.createElement('div');
-            // Check if any of its children are currently active
             const isChildActive = config.children && config.children[currentPage] != null;
             
             parentDiv.className = `nav-item-base nav-parent group ${isChildActive ? 'text-white' : ''}`;
@@ -467,12 +519,10 @@ function renderNavigation() {
                 </svg>
             `;
             
-            // Render the container for children
             const childrenContainer = document.createElement('div');
             childrenContainer.id = parentId;
             childrenContainer.className = `nav-children flex flex-col ${isChildActive ? '' : 'hidden'}`;
             
-            // Loop through and render children
             Object.keys(config.children).forEach(childKey => {
                 const childItem = document.createElement('div');
                 childItem.id = `nav-${childKey.replace(/[^a-zA-Z0-9]/g, '')}`;
@@ -492,7 +542,6 @@ function renderNavigation() {
             navContainer.appendChild(childrenContainer);
             
         } else {
-            // Render standalone item (like Overview)
             const navItem = document.createElement('div');
             navItem.id = `nav-${cleanKey}`;
             
@@ -539,4 +588,20 @@ function displayDeploymentError(message) {
     }
 }
 
-window.onload = init;
+window.onload = function() {
+    init();
+
+    let lastDevicePixelRatio = window.devicePixelRatio;
+
+    window.addEventListener('resize', () => {
+        lastDevicePixelRatio = window.devicePixelRatio;
+    });
+
+    setInterval(() => {
+        if (window.devicePixelRatio !== lastDevicePixelRatio) {
+            lastDevicePixelRatio = window.devicePixelRatio;
+            window.dispatchEvent(new Event('resize'));
+            console.log("Monitor switch detected. Recalibrating QSET layouts...");
+        }
+    }, 1000);
+};
